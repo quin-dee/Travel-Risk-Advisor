@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Travel Risk Advisor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label, select, button {
+            font-size: 16px;
+        }
+
+        select, button {
+            padding: 8px;
+            margin-top: 10px;
+        }
+
+        .response {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧭 Check Travel Risk</h1>
+    <form method="POST" action="/">
+        <label for="state">Select a State:</label>
+        <br>
+        <select name="state" id="state" required>
+            {% for state in states %}
+                <option value="{{ state }}">{{ state }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button type="submit">Get Advice</button>
+    </form>
+
+    {% if advice %}
+    <div class="response">
+        <h3>Travel Advice:</h3>
+        <p>{{ advice }}</p>
+    </div>
+    {% endif %}
+</body>
+</html>
+
