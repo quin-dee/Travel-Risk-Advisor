@@ -1,40 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Travel Risk Advisor</title>
+    <title>🧳 Travel Risk Advisor</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f8fa;
-            text-align: center;
-            padding: 50px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef5f9;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 40px;
-            max-width: 500px;
-            margin: auto;
-            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 80px auto;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
         }
 
         h1 {
             color: #2c3e50;
+            margin-bottom: 30px;
         }
 
         select, button {
-            padding: 10px;
+            padding: 12px;
             margin-top: 20px;
             width: 100%;
             font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
         }
 
         button {
             background-color: #007bff;
             color: white;
-            border: none;
+            font-weight: bold;
             cursor: pointer;
+            border: none;
         }
 
         button:hover {
@@ -42,19 +47,24 @@
         }
 
         .advice-box {
-            margin-top: 30px;
-            background-color: #e8f0fe;
-            padding: 20px;
-            border-radius: 10px;
-            color: #333;
+            margin-top: 40px;
+            background-color: #f3f8ff;
+            padding: 25px;
+            border-left: 5px solid #007bff;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .advice-box strong {
+            color: #2c3e50;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Check Travel Risk</h1>
+        <h1>🧳 Travel Risk Advisor</h1>
         <form method="POST">
-            <label for="state">Select a State:</label>
+            <label for="state"><strong>Select a State:</strong></label>
             <select name="state" id="state" required>
                 {% for state in states %}
                     <option value="{{ state }}">{{ state }}</option>
@@ -65,8 +75,8 @@
 
         {% if advice %}
         <div class="advice-box">
-            <h3>Travel Advice:</h3>
-            <p>{{ advice }}</p>
+            <h3><strong>Travel Advice:</strong></h3>
+            <p>{{ advice|safe }}</p>
         </div>
         {% endif %}
     </div>
