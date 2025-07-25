@@ -5,7 +5,7 @@ import joblib
 app = Flask(__name__)
 
 # Loading model and dataset
-model = joblib.load("model.pkl")
+model = joblib.load("travel_risk_model.pkl")
 df = pd.read_csv("travel_risk.csv")
 
 @app.route("/", methods=["GET", "POST"])
