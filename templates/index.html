@@ -5,56 +5,70 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 50px;
-            background-color: #f4f4f4;
+            background-color: #f6f8fa;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
         }
 
         h1 {
-            color: #333;
-        }
-
-        form {
-            margin-bottom: 20px;
-        }
-
-        label, select, button {
-            font-size: 16px;
+            color: #2c3e50;
         }
 
         select, button {
-            padding: 8px;
-            margin-top: 10px;
+            padding: 10px;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 16px;
         }
 
-        .response {
-            background-color: #fff;
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .advice-box {
+            margin-top: 30px;
+            background-color: #e8f0fe;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-            max-width: 600px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <h1>🧭 Check Travel Risk</h1>
-    <form method="POST" action="/">
-        <label for="state">Select a State:</label>
-        <br>
-        <select name="state" id="state" required>
-            {% for state in states %}
-                <option value="{{ state }}">{{ state }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <button type="submit">Get Advice</button>
-    </form>
+    <div class="container">
+        <h1>Check Travel Risk</h1>
+        <form method="POST">
+            <label for="state">Select a State:</label>
+            <select name="state" id="state" required>
+                {% for state in states %}
+                    <option value="{{ state }}">{{ state }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Get Advice</button>
+        </form>
 
-    {% if advice %}
-    <div class="response">
-        <h3>Travel Advice:</h3>
-        <p>{{ advice }}</p>
+        {% if advice %}
+        <div class="advice-box">
+            <h3>Travel Advice:</h3>
+            <p>{{ advice }}</p>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </body>
 </html>
-
