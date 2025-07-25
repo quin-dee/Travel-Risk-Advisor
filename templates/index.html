@@ -1,68 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>🧳 Travel Risk Advisor</title>
     <style>
         body {
+            background-color: #d9eaf7;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e3f2fd; 
-            color: #212121;
+            color: #333;
+            padding: 30px;
             text-align: center;
-            padding: 50px;
         }
 
         .container {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 40px;
+            background-color: #ffffffdd;
+            border-radius: 12px;
+            padding: 30px;
             max-width: 600px;
             margin: auto;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
-            color: #0077c2;
-            font-size: 2em;
+            font-size: 32px;
+            margin-bottom: 20px;
         }
 
         select, button {
-            padding: 12px;
-            margin-top: 20px;
-            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
             font-size: 16px;
-            border-radius: 5px;
+            border-radius: 8px;
             border: 1px solid #ccc;
-        }
-
-        select {
-            background-color: #f0f8ff;
-            color: #212121;
+            width: 100%;
         }
 
         button {
-            background-color: #0288d1;
+            background-color: #4a90e2;
             color: white;
-            border: none;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #0277bd;
+            background-color: #357abd;
         }
 
         .advice-box {
-            margin-top: 30px;
-            background-color: #e1f5fe;
-            padding: 20px;
-            border-radius: 10px;
-            color: #212121;
+            margin-top: 20px;
+            background-color: #f2f9ff;
+            padding: 15px;
+            border-left: 5px solid #4a90e2;
+            border-radius: 8px;
             text-align: left;
-        }
-
-        .emoji {
-            font-size: 1.5em;
-            margin-right: 5px;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🧳 Travel Risk Advisor</h1>
+
+        <form method="POST">
+            <label for="state"><strong>Select a State:</strong></label><br>
+            <select name="state" id="state" required>
+                {% for state in states %}
+                    <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
+                {% endfor %}
+            </select><br>
+
+            <button type="submit">Get Advice</button>
+        </form>
+
+        {% if advice %}
+            <div class="advice-box">
+                {{ advice | safe }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
