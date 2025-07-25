@@ -5,24 +5,24 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef5f9;
-            margin: 0;
-            padding: 0;
+            background-color: #e3f2fd; 
+            color: #212121;
+            text-align: center;
+            padding: 50px;
         }
 
         .container {
-            background: #1e1e1e;
-            border-radius: 12px;
+            background-color: #ffffff;
+            border-radius: 10px;
             padding: 40px;
             max-width: 600px;
-            margin: 80px auto;
-            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
-            text-align: center;
+            margin: auto;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
-            color: #2c3e50;
-            margin-bottom: 30px;
+            color: #0077c2;
+            font-size: 2em;
         }
 
         select, button {
@@ -30,55 +30,39 @@
             margin-top: 20px;
             width: 100%;
             font-size: 16px;
-            border-radius: 6px;
+            border-radius: 5px;
             border: 1px solid #ccc;
         }
 
+        select {
+            background-color: #f0f8ff;
+            color: #212121;
+        }
+
         button {
-            background-color: #007bff;
+            background-color: #0288d1;
             color: white;
-            font-weight: bold;
-            cursor: pointer;
             border: none;
+            cursor: pointer;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #0277bd;
         }
 
         .advice-box {
-            margin-top: 40px;
-            background-color: #f3f8ff;
-            padding: 25px;
-            border-left: 5px solid #007bff;
-            border-radius: 8px;
+            margin-top: 30px;
+            background-color: #e1f5fe;
+            padding: 20px;
+            border-radius: 10px;
+            color: #212121;
             text-align: left;
         }
 
-        .advice-box strong {
-            color: #2c3e50;
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧳 Travel Risk Advisor</h1>
-        <form method="POST">
-            <label for="state"><strong>Select a State:</strong></label>
-            <select name="state" id="state" required>
-                {% for state in states %}
-                    <option value="{{ state }}">{{ state }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Check Risk</button>
-        </form>
-
-        {% if advice %}
-        <div class="advice-box">
-            <h3><strong>Travel Advice:</strong></h3>
-            <p>{{ advice|safe }}</p>
-        </div>
-        {% endif %}
-    </div>
-</body>
-</html>
