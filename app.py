@@ -33,23 +33,28 @@ def get_travel_advice(state_name):
     risk_level, emoji = risk_map.get(prediction, ("Unknown", "❓"))
 
     values = X.iloc[0].to_dict()
-  
-    reason = ", ".join([
-        key.replace("_", " ").replace("Rate", "").replace("Presence", "").replace("Access", "").strip()
-        for key, value in values.items()
-        if value < df[key].median()
-    ])
+
+    reason = []
+    for key, value in values.items():
+        median = df[key].median()
+        label = key.lower().replace("_", " ")
+        if value < median:
+            if key in ['Police Presence', 'Health Facilities', 'Hospital Access']:
+                reason.append(f"low {label}")
+            else:
+                reason.append(f"high {label}")
+    reason_text = ", ".join(reason)
 
     if risk_level == "High":
         return (
             f"{emoji} <strong>{state_name}</strong> has a <strong>High</strong> travel risk.<br>"
-            f"⚠️ Main risk factors include: {reason}.<br>"
+            f"⚠️ Main risk factors include: {reason_text}.<br>"
             f"<strong>We strongly advise against non-essential travel.</strong>"
         )
     elif risk_level == "Medium":
         return (
             f"{emoji} <strong>{state_name}</strong> has a <strong>Moderate</strong> travel risk.<br>"
-            f"Possible concerns: {reason}.<br>"
+            f"Possible concerns: {reason_text}.<br>"
             f"📝 Travel with caution."
         )
     else:
