@@ -66,7 +66,8 @@ def home():
             try:
                 # Prepare features for model (drop label column)
                 row = df[df["State"] == selected_state].drop(columns=["State", "Risk Level"])
-                risk = model.predict(row)[0]  # Direct string output assumed
+                raw_pred = model.predict(row)[0]
+                risk = risk_map.get(raw_pred, "Unknown")
             except Exception as e:
                 print(f"Prediction error: {e}")
                 risk = "Unavailable"
