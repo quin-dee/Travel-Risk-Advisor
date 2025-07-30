@@ -48,7 +48,7 @@ def generate_story(state, risk_level, weather):
         return (
             f"As you journey into {state}, the sky is {weather['description']} and a steady breeze blows. "
             f"The temperature is {weather['temp']}°C, humidity at {weather['humidity']}%, and winds around {weather['wind_speed']} km/h. "
-            f"Currently, {state} faces a **{risk_level}** travel risk. If you must go, travel cautiously, avoid risky routes, and stay alert."
+            f"Currently, {state} faces a {risk_level} travel risk. If you must go, travel cautiously, avoid risky routes, and stay alert."
         )
     else:
         return "Weather data unavailable."
