@@ -15,7 +15,7 @@ df = pd.read_csv("travel_risk_clean.csv")
 # OpenWeatherMap API key
 WEATHER_API_KEY = "e2edee7f1c25fac4a1d45e181d1e676d"
 
-# Map state names to major cities for weather lookup
+# Map state names to capital cities for better weather accuracy
 weather_name_fix = {
     "Abia": "Umuahia",
     "Adamawa": "Yola",
@@ -51,7 +51,7 @@ weather_name_fix = {
     "FCT (Abuja)": "Abuja"
 }
 
-# Function to fetch weather
+# Weather fetcher
 def get_weather(state_name):
     city_name = weather_name_fix.get(state_name, state_name)
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name},NG&appid={WEATHER_API_KEY}&units=metric"
@@ -69,7 +69,7 @@ def get_weather(state_name):
         print(f"Weather API error for {state_name}: {e}")
     return None
 
-# Travel story builder
+# Story generator
 def generate_story(state, risk_level, weather):
     if weather:
         return (
@@ -80,6 +80,7 @@ def generate_story(state, risk_level, weather):
     else:
         return "Weather data unavailable."
 
+# Main route
 @app.route("/", methods=["GET", "POST"])
 def home():
     risk = ""
@@ -94,18 +95,23 @@ def home():
                 # Prepare data for prediction
                 row = df[df["State"] == selected_state].drop(columns=["State", "Risk Level"])
                 pred_encoded = model.predict(row)[0]
-                risk = label_encoder.inverse_transform([pred_encoded])[0]  # e.g., "Low", "Medium", "High"
+
+                # Decode label if numeric
+                if isinstance(pred_encoded, (int, float)) and hasattr(label_encoder, "inverse_transform"):
+                    risk = label_encoder.inverse_transform([pred_encoded])[0]
+                else:
+                    risk = str(pred_encoded)
+
             except Exception as e:
                 print(f"Prediction error: {e}")
                 risk = "Unavailable"
 
-            # Weather info
+            # Get weather data
             weather = get_weather(selected_state)
 
-            # Generate story
+            # Generate travel story
             story = generate_story(selected_state, risk, weather)
 
-    # Sort states
     states = sorted(df["State"].unique())
     return render_template("index.html", states=states, risk=risk, story=story, weather=weather, selected_state=selected_state)
 
