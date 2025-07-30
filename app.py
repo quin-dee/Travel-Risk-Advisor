@@ -5,7 +5,7 @@ import requests
 
 app = Flask(__name__)
 
-# Load model (no label encoder needed)
+# Load model
 model = joblib.load("risk_model.pkl")
 
 # Define risk_map to map model predictions to risk levels
@@ -15,14 +15,14 @@ risk_map = {
     2: "High"
 }
 
-# Load your cleaned dataset
+# Load dataset
 df = pd.read_csv("travel_risk_clean.csv")
 
 # OpenWeatherMap API key
 WEATHER_API_KEY = "e2edee7f1c25fac4a1d45e181d1e676d"
 
 # Map state names to capital cities
-weather_name_fix = {
+states = {
     "Abia": "Umuahia", "Adamawa": "Yola", "Akwa Ibom": "Uyo", "Anambra": "Awka",
     "Bauchi": "Bauchi", "Bayelsa": "Yenagoa", "Benue": "Makurdi", "Borno": "Maiduguri",
     "Cross River": "Calabar", "Delta": "Asaba", "Ebonyi": "Abakaliki", "Edo": "Benin City",
@@ -34,7 +34,7 @@ weather_name_fix = {
 }
 
 def get_weather(state_name):
-    city_name = weather_name_fix.get(state_name, state_name)
+    city_name = states.get(state_name, state_name)
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name},NG&appid={WEATHER_API_KEY}&units=metric"
     try:
         response = requests.get(url, timeout=5)
@@ -71,7 +71,7 @@ def home():
         selected_state = request.form.get("state")
         if selected_state:
             try:
-                # Prepare features for model (drop label column)
+                # Prepare features for model
                 row = df[df["State"] == selected_state].drop(columns=["State", "Risk Level"])
                 raw_pred = model.predict(row)[0]
                 risk = risk_map.get(raw_pred, "Unknown")
