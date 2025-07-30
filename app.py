@@ -8,6 +8,13 @@ app = Flask(__name__)
 # Load model (no label encoder needed)
 model = joblib.load("risk_model.pkl")
 
+# Define risk_map to map model predictions to risk levels
+risk_map = {
+    0: "Low",
+    1: "Moderate",
+    2: "High"
+}
+
 # Load your cleaned dataset
 df = pd.read_csv("travel_risk_clean.csv")
 
