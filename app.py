@@ -9,14 +9,52 @@ app = Flask(__name__)
 model = joblib.load("risk_model.pkl")
 label_encoder = joblib.load("label_encoder.pkl")
 
-# Load reference data
+# Load your cleaned dataset
 df = pd.read_csv("travel_risk_clean.csv")
 
 # OpenWeatherMap API key
-WEATHER_API_KEY = "e2edee7f1c25fac4a1d45e181d1e676d" 
+WEATHER_API_KEY = "e2edee7f1c25fac4a1d45e181d1e676d"
 
+# Map state names to major cities for weather lookup
+weather_name_fix = {
+    "Abia": "Umuahia",
+    "Adamawa": "Yola",
+    "Akwa Ibom": "Uyo",
+    "Anambra": "Awka",
+    "Bauchi": "Bauchi",
+    "Bayelsa": "Yenagoa",
+    "Benue": "Makurdi",
+    "Borno": "Maiduguri",
+    "Cross River": "Calabar",
+    "Delta": "Asaba",
+    "Ebonyi": "Abakaliki",
+    "Edo": "Benin City",
+    "Ekiti": "Ado Ekiti",
+    "Enugu": "Enugu",
+    "Gombe": "Gombe",
+    "Imo": "Owerri",
+    "Jigawa": "Dutse",
+    "Kaduna": "Kaduna",
+    "Kano": "Kano",
+    "Katsina": "Katsina",
+    "Kebbi": "Birnin Kebbi",
+    "Kogi": "Lokoja",
+    "Kwara": "Ilorin",
+    "Lagos": "Lagos",
+    "Nasarawa": "Lafia",
+    "Niger": "Minna",
+    "Ogun": "Abeokuta",
+    "Ondo": "Akure",
+    "Osun": "Osogbo",
+    "Oyo": "Ibadan",
+    "Plateau": "Jos",
+    "FCT (Abuja)": "Abuja"
+}
+
+# Function to fetch weather
 def get_weather(state_name):
-    url = f"http://api.openweathermap.org/data/2.5/weather?q={state_name},NG&appid={WEATHER_API_KEY}&units=metric"
+    city_name = weather_name_fix.get(state_name, state_name)
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name},NG&appid={WEATHER_API_KEY}&units=metric"
     try:
         response = requests.get(url, timeout=5)
         if response.status_code == 200:
@@ -27,12 +65,11 @@ def get_weather(state_name):
                 "humidity": data["main"]["humidity"],
                 "wind_speed": data["wind"]["speed"]
             }
-        else:
-            return None
     except Exception as e:
         print(f"Weather API error for {state_name}: {e}")
-        return None
+    return None
 
+# Travel story builder
 def generate_story(state, risk_level, weather):
     if weather:
         return (
@@ -53,21 +90,22 @@ def home():
     if request.method == "POST":
         selected_state = request.form.get("state")
         if selected_state:
-            # Filter the data for prediction
             try:
-                state_data = df[df["State"] == selected_state].drop(columns=["State", "Risk Level"])
-                pred = model.predict(state_data)[0]
-                risk = label_encoder.inverse_transform([pred])[0]
+                # Prepare data for prediction
+                row = df[df["State"] == selected_state].drop(columns=["State", "Risk Level"])
+                pred_encoded = model.predict(row)[0]
+                risk = label_encoder.inverse_transform([pred_encoded])[0]  # e.g., "Low", "Medium", "High"
             except Exception as e:
-                print(f"Model prediction error: {e}")
+                print(f"Prediction error: {e}")
                 risk = "Unavailable"
 
-            # Get weather data
+            # Weather info
             weather = get_weather(selected_state)
 
             # Generate story
             story = generate_story(selected_state, risk, weather)
 
+    # Sort states
     states = sorted(df["State"].unique())
     return render_template("index.html", states=states, risk=risk, story=story, weather=weather, selected_state=selected_state)
 
