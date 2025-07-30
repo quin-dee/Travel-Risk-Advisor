@@ -6,8 +6,8 @@ import requests
 app = Flask(__name__)
 
 # Load model and label encoder
-model = joblib.load("Model/risk_model.pkl")
-label_encoder = joblib.load("Model/label_encoder.pkl")
+model = joblib.load("risk_model.pkl")
+label_encoder = joblib.load("label_encoder.pkl")
 
 # Load the reference dataset to fetch state info
 df = pd.read_csv("travel_risk_clean.csv")  
