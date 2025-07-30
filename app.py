@@ -5,9 +5,8 @@ import requests
 
 app = Flask(__name__)
 
-# Load model and label encoder
+# Load model (no label encoder needed)
 model = joblib.load("risk_model.pkl")
-label_encoder = joblib.load("label_encoder.pkl")
 
 # Load your cleaned dataset
 df = pd.read_csv("travel_risk_clean.csv")
@@ -15,43 +14,18 @@ df = pd.read_csv("travel_risk_clean.csv")
 # OpenWeatherMap API key
 WEATHER_API_KEY = "e2edee7f1c25fac4a1d45e181d1e676d"
 
-# Map state names to capital cities for better weather accuracy
+# Map state names to capital cities
 weather_name_fix = {
-    "Abia": "Umuahia",
-    "Adamawa": "Yola",
-    "Akwa Ibom": "Uyo",
-    "Anambra": "Awka",
-    "Bauchi": "Bauchi",
-    "Bayelsa": "Yenagoa",
-    "Benue": "Makurdi",
-    "Borno": "Maiduguri",
-    "Cross River": "Calabar",
-    "Delta": "Asaba",
-    "Ebonyi": "Abakaliki",
-    "Edo": "Benin City",
-    "Ekiti": "Ado Ekiti",
-    "Enugu": "Enugu",
-    "Gombe": "Gombe",
-    "Imo": "Owerri",
-    "Jigawa": "Dutse",
-    "Kaduna": "Kaduna",
-    "Kano": "Kano",
-    "Katsina": "Katsina",
-    "Kebbi": "Birnin Kebbi",
-    "Kogi": "Lokoja",
-    "Kwara": "Ilorin",
-    "Lagos": "Lagos",
-    "Nasarawa": "Lafia",
-    "Niger": "Minna",
-    "Ogun": "Abeokuta",
-    "Ondo": "Akure",
-    "Osun": "Osogbo",
-    "Oyo": "Ibadan",
-    "Plateau": "Jos",
-    "FCT (Abuja)": "Abuja"
+    "Abia": "Umuahia", "Adamawa": "Yola", "Akwa Ibom": "Uyo", "Anambra": "Awka",
+    "Bauchi": "Bauchi", "Bayelsa": "Yenagoa", "Benue": "Makurdi", "Borno": "Maiduguri",
+    "Cross River": "Calabar", "Delta": "Asaba", "Ebonyi": "Abakaliki", "Edo": "Benin City",
+    "Ekiti": "Ado Ekiti", "Enugu": "Enugu", "Gombe": "Gombe", "Imo": "Owerri",
+    "Jigawa": "Dutse", "Kaduna": "Kaduna", "Kano": "Kano", "Katsina": "Katsina",
+    "Kebbi": "Birnin Kebbi", "Kogi": "Lokoja", "Kwara": "Ilorin", "Lagos": "Lagos",
+    "Nasarawa": "Lafia", "Niger": "Minna", "Ogun": "Abeokuta", "Ondo": "Akure",
+    "Osun": "Osogbo", "Oyo": "Ibadan", "Plateau": "Jos", "FCT (Abuja)": "Abuja"
 }
 
-# Weather fetcher
 def get_weather(state_name):
     city_name = weather_name_fix.get(state_name, state_name)
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city_name},NG&appid={WEATHER_API_KEY}&units=metric"
@@ -69,7 +43,6 @@ def get_weather(state_name):
         print(f"Weather API error for {state_name}: {e}")
     return None
 
-# Story generator
 def generate_story(state, risk_level, weather):
     if weather:
         return (
@@ -80,7 +53,6 @@ def generate_story(state, risk_level, weather):
     else:
         return "Weather data unavailable."
 
-# Main route
 @app.route("/", methods=["GET", "POST"])
 def home():
     risk = ""
@@ -92,24 +64,17 @@ def home():
         selected_state = request.form.get("state")
         if selected_state:
             try:
-                # Prepare data for prediction
+                # Prepare features for model (drop label column)
                 row = df[df["State"] == selected_state].drop(columns=["State", "Risk Level"])
-                pred_encoded = model.predict(row)[0]
-
-                # Decode label if numeric
-                if isinstance(pred_encoded, (int, float)) and hasattr(label_encoder, "inverse_transform"):
-                    risk = label_encoder.inverse_transform([pred_encoded])[0]
-                else:
-                    risk = str(pred_encoded)
-
+                risk = model.predict(row)[0]  # Direct string output assumed
             except Exception as e:
                 print(f"Prediction error: {e}")
                 risk = "Unavailable"
 
-            # Get weather data
+            # Weather
             weather = get_weather(selected_state)
 
-            # Generate travel story
+            # Story
             story = generate_story(selected_state, risk, weather)
 
     states = sorted(df["State"].unique())
